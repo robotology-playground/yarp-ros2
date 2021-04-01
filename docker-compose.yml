@@ -4,7 +4,6 @@ x-base: &base
   image: robotology/yarp-ros2:default
   environment:
     - DISPLAY=${DISPLAY}
-    - LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/ros/foxy/lib/
     - XAUTHORITY=/home/user1/.Xauthority
     - QT_X11_NO_MITSHM=1
     - DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user1/1000/bus
@@ -23,9 +22,7 @@ x-base: &base
     - "${HOME}/.local/share/yarp:/home/user1/.local/share/yarp:rw"
     - "${HOME}/.gitconfig:/home/user1/.gitconfig"
     - ros1-volume:/home/user1/.ros
-    - /dev:/dev
   network_mode: host
-  privileged: true
   ipc: host
   pid: host
   security_opt:
@@ -64,7 +61,6 @@ services:
 # Images
   yarp-ros2-image:
     image: robotology/yarp-ros2:default
-    privileged: true
     build:
       dockerfile: Dockerfile
       context: .
@@ -79,8 +75,7 @@ services:
     <<: *base_ros1
     container_name: roscore
     command: roscore -v
-    
-    
+
   yarp-server:
     <<: *base
     container_name: yarp-server
@@ -89,33 +84,38 @@ services:
     depends_on:
       - roscore
 
-      
-  cer_rviz:
-    <<: *base_ros1
-    container_name: cer_rviz
-    command: sh -c "rviz"
-    depends_on:
-      - roscore
-      
-  cer_rviz2:
+  gazebo:
     <<: *base_ros2
-    container_name: cer_rviz2
-    command: sh -c "rviz2"
-
-  yarprobotinterface:
-    <<: *base
-    container_name: yarprobotinterface
-    # FIXME sleep
-    command: sh -c "sleep 8 && yarprobotinterface --config /home/user1/robots-configuration/CER04/realsense2.xml"
+    container_name: gazebo
+    command: sh -c "yarp wait $${YARP_NAMESPACE}; gazebo"
     depends_on:
       - roscore
       - yarp-server
 
+  yarpmotorgui:
+    <<: *base
+    container_name: yarpmotorgui
+    command: sh -c "yarp wait $${YARP_NAMESPACE}; yarp wait /SIM_CER_ROBOT/head/state:o; cd /home/user1/cer-sim/conf; yarpmotorgui --from yarpmotorgui.ini"
+    depends_on:
+      - yarp-server
+      - gazebo
+
+  cer_rviz:
+    <<: *base_ros1
+    container_name: cer_rviz
+    command: sh -c "sleep 3 && roslaunch cer_rviz cer.launch"
+    depends_on:
+      - roscore
+
+  cer_rviz2:
+    <<: *base_ros2
+    container_name: cer_rviz2
+    command: ros2 launch cer_rviz2 cer.launch
 
   terminator:
     <<: *base
     container_name: terminator
-    command: terminator -u
+    command: terminator
 
 volumes:
   ros1-volume:

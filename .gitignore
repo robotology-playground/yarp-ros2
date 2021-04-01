@@ -30,6 +30,3 @@ compile_commands.json
 /.cache/
 /ros2_interfaces_ws/install/
 /ros2_interfaces_ws/log/
-/conf_files/
-/docker-compose.yml.old
-/robots-configuration/
