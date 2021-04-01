@@ -41,7 +41,38 @@ namespace RGBDToPointCloudRos2Impl {
 
     constexpr double DEFAULT_THREAD_PERIOD = 0.03; // s
 } // namespace
-
+/**
+ *  @ingroup dev_impl_wrapper
+ *
+ * \section RGBDToPointCloudSensor_nws_ros2_device_parameters Description of input parameters
+ * A Network grabber for kinect-like devices.
+ * This device will produce one stream of data for the point cloud
+ * derived fron the combination of the data derived from Framegrabber and IDepthSensor interfaces.
+ * See they documentation for more details about each interface.
+ *
+ *   Parameters required by this device are:
+ * | Parameter name         | SubParameter            | Type    | Units          | Default Value | Required                        | Description                                                                                         | Notes |
+ * |:----------------------:|:-----------------------:|:-------:|:--------------:|:-------------:|:------------------------------: |:---------------------------------------------------------------------------------------------------:|:-----:|
+ * | period                 |      -                  | int     |  ms            |   20          |  No                             | refresh period of the broadcasted values in ms                                                      | default 20ms |
+ * | subdevice              |      -                  | string  |  -             |   -           |  alternative to 'attach' action | name of the subdevice to use as a data source                                                       | when used, parameters for the subdevice must be provided as well |
+ * | pointCloudTopicName    |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS point cloud topic                                                              | must start with a leading '/' |
+ * | frame_Id               |      -                  | string  |  -             |               |  Yes                            | set the name of the reference frame                                                                 |                               |
+ * | nodeName               |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS node                                                                           | must start with a leading '/' |
+ *
+ * ROS2 message type used is sensor_msgs/PointCloud2.msg ( https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/PointCloud2.msg)
+ * Some example of configuration files:
+ *
+ * Example of configuration file using .ini format.
+ *
+ * \code{.unparsed}
+ * device RGBDToPointCloudSensor_nws_ros2
+ * subdevice <RGBDsensor>
+ * period 33
+ * pointCloudTopicName /<robotName>/RGBDToPointCloud
+ * frame_Id /<robotName>/<framed_Id>
+ * nodeName /<robotName>/RGBDToPointCloudSensorNode
+ * \endcode
+ */
 class Ros2Init
 {
 public:
