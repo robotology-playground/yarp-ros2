@@ -76,8 +76,7 @@ bool RGBDToPointCloudSensor_nws_ros2::fromConfig(yarp::os::Searchable &config)
     if (!config.check("period", "refresh period of the broadcasted values in ms")) {
         yCDebug(RGBDTOPOINTCLOUDSENSOR_NWS_ROS2) << "Using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "s";
     } else {
-        // FIXME DRDANZ FIXME This should be in seconds
-        setPeriod(config.find("period").asInt32() / 1000.0);
+        setPeriod(config.find("period").asInt32());
     }
 
     //check if param exist and assign it to corresponding variable.. if it doesn't, initialize the variable with default value.
@@ -186,11 +185,6 @@ bool RGBDToPointCloudSensor_nws_ros2::attachAll(const yarp::dev::PolyDriverList 
     }
 
     yarp::dev::PolyDriver * Idevice2attach = device2attach[0]->poly;
-    if(device2attach[0]->key == "IRGBDSensor") {
-        yCInfo(RGBDTOPOINTCLOUDSENSOR_NWS_ROS2) << "Good name!";
-    } else {
-        yCInfo(RGBDTOPOINTCLOUDSENSOR_NWS_ROS2) << "Bad name!";
-    }
 
     if (!Idevice2attach->isValid()) {
         yCError(RGBDTOPOINTCLOUDSENSOR_NWS_ROS2) << "Device " << device2attach[0]->key << " to attach to is not valid ... cannot proceed";

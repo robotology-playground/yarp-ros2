@@ -39,7 +39,7 @@ namespace RGBDToPointCloudRos2Impl {
     const std::string nodeName_param = "nodeName";
     const std::string pointCloudTopicName_param = "pointCloudTopicName";
 
-    constexpr double DEFAULT_THREAD_PERIOD = 0.03; // s
+    constexpr double DEFAULT_THREAD_PERIOD = 0.033; // s
 } // namespace
 /**
  *  @ingroup dev_impl_wrapper
@@ -53,7 +53,7 @@ namespace RGBDToPointCloudRos2Impl {
  *   Parameters required by this device are:
  * | Parameter name         | SubParameter            | Type    | Units          | Default Value | Required                        | Description                                                                                         | Notes |
  * |:----------------------:|:-----------------------:|:-------:|:--------------:|:-------------:|:------------------------------: |:---------------------------------------------------------------------------------------------------:|:-----:|
- * | period                 |      -                  | int     |  ms            |   20          |  No                             | refresh period of the broadcasted values in ms                                                      | default 20ms |
+ * | period                 |      -                  | int     |  s             |   0.033       |  No                             | refresh period of the broadcasted values in ms                                                      | default 20ms |
  * | subdevice              |      -                  | string  |  -             |   -           |  alternative to 'attach' action | name of the subdevice to use as a data source                                                       | when used, parameters for the subdevice must be provided as well |
  * | pointCloudTopicName    |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS point cloud topic                                                              | must start with a leading '/' |
  * | frame_Id               |      -                  | string  |  -             |               |  Yes                            | set the name of the reference frame                                                                 |                               |
