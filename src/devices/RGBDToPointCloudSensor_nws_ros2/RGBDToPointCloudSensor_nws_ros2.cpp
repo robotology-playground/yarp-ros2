@@ -317,7 +317,6 @@ bool RGBDToPointCloudSensor_nws_ros2::writeData()
                 colorImagePixelRGB.setExternal(colorImage.getRawImage(), colorImage.width(), colorImage.height());
                 // create point cloud in yarp format
                 yarp::sig::PointCloud<yarp::sig::DataXYZRGBA> yarpCloud = yarp::sig::utils::depthRgbToPC<yarp::sig::DataXYZRGBA, yarp::sig::PixelRgb>(depthImage, colorImagePixelRGB, intrinsics);
-                //Time rosTime = Time(depthStamp.getTime());
                 sensor_msgs::msg::PointCloud2 pc2Ros;
 
                 // filling ros header
@@ -351,7 +350,6 @@ bool RGBDToPointCloudSensor_nws_ros2::writeData()
 
                 std::vector<unsigned char> vec(yarpCloud.getRawData(), yarpCloud.getRawData() + yarpCloud.dataSizeBytes());
                 pc2Ros.data = vec;
-                //pc2Ros.header = headerRos;
                 pc2Ros.width = yarpCloud.width() * yarpCloud.height();
                 pc2Ros.height = 1;
                 pc2Ros.is_dense = yarpCloud.isDense();
