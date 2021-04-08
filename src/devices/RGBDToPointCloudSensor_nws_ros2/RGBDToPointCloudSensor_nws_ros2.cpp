@@ -73,10 +73,10 @@ bool RGBDToPointCloudSensor_nws_ros2::open(yarp::os::Searchable &config)
 
 bool RGBDToPointCloudSensor_nws_ros2::fromConfig(yarp::os::Searchable &config)
 {
-    if (!config.check("period", "refresh period of the broadcasted values in ms")) {
+    if (!config.check("period", "refresh period of the broadcasted values in s")) {
         yCDebug(RGBDTOPOINTCLOUDSENSOR_NWS_ROS2) << "Using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "s";
     } else {
-        setPeriod(config.find("period").asInt32());
+        setPeriod(config.find("period").asFloat64());
     }
 
     //check if param exist and assign it to corresponding variable.. if it doesn't, initialize the variable with default value.
