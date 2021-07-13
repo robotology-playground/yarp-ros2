@@ -1,24 +1,14 @@
 /*
- * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <chrono>
 #include <vector>
-#include "map2D_nws_ros2.h"
+#include "Map2D_nws_ros2.h"
 #include <yarp/dev/IMap2D.h>
 #include <yarp/dev/INavigation2D.h>
 #include <yarp/dev/GenericVocabs.h>
@@ -64,19 +54,11 @@ Map2D_nws_ros2::Map2D_nws_ros2()
     m_currentMapName = "none";
 }
 
-bool Map2D_nws_ros2::attachAll(const PolyDriverList& device2attach)
+bool Map2D_nws_ros2::attach(yarp::dev::PolyDriver* driver)
 {
-    if (device2attach.size() != 1)
+    if (driver->isValid())
     {
-        yCError(MAP2D_NWS_ROS2, "Cannot attach more than one device");
-        return false;
-    }
-
-    yarp::dev::PolyDriver* Idevice2attach = device2attach[0]->poly;
-
-    if (Idevice2attach->isValid())
-    {
-        Idevice2attach->view(m_iMap2D);
+        driver->view(m_iMap2D);
         vector<string> maps;
         m_iMap2D->get_map_names(maps);
         m_currentMapName = maps[0];
@@ -91,7 +73,7 @@ bool Map2D_nws_ros2::attachAll(const PolyDriverList& device2attach)
     return true;
 }
 
-bool Map2D_nws_ros2::detachAll()
+bool Map2D_nws_ros2::detach()
 {
     m_iMap2D = nullptr;
     return true;
@@ -115,7 +97,6 @@ bool Map2D_nws_ros2::open(yarp::os::Searchable &config)
     if (config.check("subdevice"))
     {
         Property       p;
-        PolyDriverList driverlist;
         p.fromString(config.toString(), false);
         p.put("device", config.find("subdevice").asString());
 
@@ -125,8 +106,7 @@ bool Map2D_nws_ros2::open(yarp::os::Searchable &config)
             return false;
         }
 
-        driverlist.push(&m_drv, "1");
-        if (!attachAll(driverlist))
+        if (!attach(&m_drv))
         {
             yCError(MAP2D_NWS_ROS2) << "Failed to open subdevice.. check params";
             return false;
