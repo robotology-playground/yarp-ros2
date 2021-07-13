@@ -7,7 +7,7 @@
 yarp_prepare_plugin(localization2D_nws_ros2
   CATEGORY device
   TYPE Localization2D_nws_ros2
-  INCLUDE localization2D_nws_ros2.h
+  INCLUDE Localization2D_nws_ros2.h
   INTERNAL ON
 )
 
@@ -15,8 +15,8 @@ yarp_add_plugin(yarp_localization2D_nws_ros2)
 
 target_sources(yarp_localization2D_nws_ros2
   PRIVATE
-    localization2D_nws_ros2.cpp
-    localization2D_nws_ros2.h
+    Localization2D_nws_ros2.cpp
+    Localization2D_nws_ros2.h
 )
 
 target_link_libraries(yarp_localization2D_nws_ros2
