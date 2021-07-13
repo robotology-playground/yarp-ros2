@@ -6,7 +6,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "rgbdSensor_nws_ros2.h"
+#include "RgbdSensor_nws_ros2.h"
 
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
@@ -31,8 +31,6 @@ const std::string colorTopicName_param     = "colorTopicName";
 const std::string depthTopicName_param     = "depthTopicName";
 const std::string depthInfoTopicName_param = "depthInfoTopicName";
 const std::string colorInfoTopicName_param = "colorInfoTopicName";
-
-
 
 
 
@@ -97,9 +95,6 @@ RgbdSensor_nws_ros2::RgbdSensor_nws_ros2() :
 }
 
 
-
-
-
 // DeviceDriver
 bool RgbdSensor_nws_ros2::open(yarp::os::Searchable &config)
 {
@@ -116,7 +111,7 @@ bool RgbdSensor_nws_ros2::open(yarp::os::Searchable &config)
     }
 
     // check if we need to create subdevice or if they are
-    // passed later on through attachAll()
+    // passed later on through attach()
     if (isSubdeviceOwned && !openAndAttachSubDevice(config)) {
         yCError(RGBDSENSOR_NWS_ROS2, "Error while opening subdevice");
         return false;
@@ -178,13 +173,10 @@ bool RgbdSensor_nws_ros2::initialize_ROS2(yarp::os::Searchable &params)
 }
 
 
-
-
-
 bool RgbdSensor_nws_ros2::close()
 {
     yCTrace(RGBDSENSOR_NWS_ROS2, "Close");
-    detachAll();
+    detach();
 
     // close subdevice if it was created inside the open (--subdevice option)
     if(isSubdeviceOwned)
@@ -234,91 +226,47 @@ void RgbdSensor_nws_ros2::run()
 }
 
 
-
-
-
-
-
 /*
- * IWrapper and IMultipleWrapper interfaces
+ * WrapperSingle interface
  */
-bool RgbdSensor_nws_ros2::attachAll(const yarp::dev::PolyDriverList &device2attach)
-{
-    // First implementation only accepts devices with both the interfaces Framegrabber and IDepthSensor,
-    // on a second version maybe two different devices could be accepted, one for each interface.
-    // Yet to be defined which and how parameters shall be used in this case ... using the name of the
-    // interface to view could be a good initial guess.
-    if (device2attach.size() != 1)
-    {
-        yCError(RGBDSENSOR_NWS_ROS2, "Cannot attach more than one device");
-        return false;
-    }
-
-    yarp::dev::PolyDriver * Idevice2attach = device2attach[0]->poly;
-    if(device2attach[0]->key == "IRGBDSensor") {
-        yCInfo(RGBDSENSOR_NWS_ROS2) << "Good name!";
-    } else {
-        yCInfo(RGBDSENSOR_NWS_ROS2) << "Bad name!";
-    }
-
-    if (!Idevice2attach->isValid()) {
-        yCError(RGBDSENSOR_NWS_ROS2) << "Device " << device2attach[0]->key << " to attach to is not valid ... cannot proceed";
-        return false;
-    }
-
-    Idevice2attach->view(sensor_p);
-    Idevice2attach->view(fgCtrl);
-    if(!attach(sensor_p)) {
-        return false;
-    }
-
-    return start();
-}
-
-bool RgbdSensor_nws_ros2::detachAll()
-{
-    if (isRunning()) {
-        stop();
-    }
-
-    //check if we already instantiated a subdevice previously
-    if (isSubdeviceOwned) {
-        return false;
-    }
-
-    sensor_p = nullptr;
-    return true;
-}
-
-bool RgbdSensor_nws_ros2::attach(yarp::dev::IRGBDSensor *s)
-{
-    if(s == nullptr) {
-        yCError(RGBDSENSOR_NWS_ROS2) << "Attached device has no valid IRGBDSensor interface.";
-        return false;
-    }
-    sensor_p = s;
-
-    return start();
-}
 
 bool RgbdSensor_nws_ros2::attach(yarp::dev::PolyDriver* poly)
 {
-    if(poly) {
+    if(poly)
+    {
         poly->view(sensor_p);
         poly->view(fgCtrl);
     }
 
-    if(sensor_p == nullptr) {
+    if(sensor_p == nullptr)
+    {
         yCError(RGBDSENSOR_NWS_ROS2) << "Attached device has no valid IRGBDSensor interface.";
         return false;
     }
 
-    return start();
+    if(fgCtrl == nullptr)
+    {
+        yCWarning(RGBDSENSOR_NWS_ROS2) << "Attached device has no valid IFrameGrabberControls interface.";
+    }
+
+    return PeriodicThread::start();
 }
+
 
 bool RgbdSensor_nws_ros2::detach()
 {
+    if (yarp::os::PeriodicThread::isRunning())
+        yarp::os::PeriodicThread::stop();
+
+    //check if we already instantiated a subdevice previously
+    if (isSubdeviceOwned)
+        return false;
+
     sensor_p = nullptr;
+    if (fgCtrl)
+    {
+        fgCtrl = nullptr;
+    }
     return true;
 }
 
@@ -457,6 +405,7 @@ bool RgbdSensor_nws_ros2::setCamInfo(sensor_msgs::msg::CameraInfo& cameraInfo,
     cameraInfo.roi.do_rectify = false;
     return true;
 }
+
 
 bool RgbdSensor_nws_ros2::writeData()
 {

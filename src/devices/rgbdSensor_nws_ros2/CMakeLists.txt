@@ -7,7 +7,7 @@
 yarp_prepare_plugin(rgbdSensor_nws_ros2
   CATEGORY device
   TYPE RgbdSensor_nws_ros2
-  INCLUDE rgbdSensor_nws_ros2.h
+  INCLUDE RgbdSensor_nws_ros2.h
   EXTRA_CONFIG WRAPPER=rgbdSensor_nws_ros2
   INTERNAL ON
 )
@@ -16,8 +16,8 @@ yarp_add_plugin(yarp_rgbdSensor_nws_ros2)
 
 target_sources(yarp_rgbdSensor_nws_ros2
   PRIVATE
-    rgbdSensor_nws_ros2.cpp
-    rgbdSensor_nws_ros2.h
+    RgbdSensor_nws_ros2.cpp
+    RgbdSensor_nws_ros2.h
 )
 
 target_link_libraries(yarp_rgbdSensor_nws_ros2
