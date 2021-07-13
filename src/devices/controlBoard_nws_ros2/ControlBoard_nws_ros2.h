@@ -10,8 +10,7 @@
 #define YARP_DEV_CONTROLBOARD_NWS_ROS2_H
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/IMultipleWrapper.h>
-#include <yarp/dev/IWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include <yarp/os/PeriodicThread.h>
 
 #include <yarp/dev/IPositionControl.h>
@@ -63,8 +62,7 @@ public:
 class ControlBoard_nws_ros2 :
         public yarp::dev::DeviceDriver,
         public yarp::os::PeriodicThread,
-        public yarp::dev::IMultipleWrapper,
-        public yarp::dev::IWrapper
+        public yarp::dev::WrapperSingle
 {
 private:
     sensor_msgs::msg::JointState ros_struct;
@@ -121,10 +119,6 @@ public:
     // yarp::dev::IWrapper
     bool attach(yarp::dev::PolyDriver* poly) override;
     bool detach() override;
-
-    // yarp::dev::IMultipleWrapper
-    bool attachAll(const yarp::dev::PolyDriverList &l) override;
-    bool detachAll() override;
 
     // yarp::os::PeriodicThread
     void run() override;

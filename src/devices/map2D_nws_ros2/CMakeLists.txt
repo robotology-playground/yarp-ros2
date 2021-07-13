@@ -12,7 +12,7 @@ find_package(visualization_msgs REQUIRED)
 yarp_prepare_plugin(map2D_nws_ros2
   CATEGORY device
   TYPE Map2D_nws_ros2
-  INCLUDE map2D_nws_ros2.h
+  INCLUDE Map2D_nws_ros2.h
   EXTRA_CONFIG WRAPPER=map2D_nws_ros2
   INTERNAL ON
 )
@@ -21,8 +21,8 @@ yarp_add_plugin(yarp_map2D_nws_ros2)
 
 target_sources(yarp_map2D_nws_ros2
   PRIVATE
-    map2D_nws_ros2.cpp
-    map2D_nws_ros2.h
+    Map2D_nws_ros2.cpp
+    Map2D_nws_ros2.h
 )
 
 target_link_libraries(yarp_map2D_nws_ros2

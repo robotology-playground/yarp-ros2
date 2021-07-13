@@ -1,19 +1,9 @@
 /*
- * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_MAP2D_NWS_ROS2_H
@@ -41,7 +31,7 @@
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/Map2DArea.h>
 #include <yarp/dev/Map2DPath.h>
-#include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include <yarp/os/ResourceFinder.h>
 
 #include <yarp/dev/PolyDriver.h>
@@ -99,7 +89,7 @@ class Map2D_nws_ros2 :
         public yarp::os::Thread,
         public yarp::dev::DeviceDriver,
         public yarp::os::PortReader,
-        public yarp::dev::IMultipleWrapper
+        public yarp::dev::WrapperSingle
 {
 public:
     Map2D_nws_ros2();
@@ -107,8 +97,8 @@ public:
     
 
     //IMultipleWrapper
-    bool attachAll(const yarp::dev::PolyDriverList& device2attach) override;
-    bool detachAll() override;
+    bool attach(yarp::dev::PolyDriver* driver) override;
+    bool detach() override;
 
     // DeviceDriver
     bool open(yarp::os::Searchable &config) override;

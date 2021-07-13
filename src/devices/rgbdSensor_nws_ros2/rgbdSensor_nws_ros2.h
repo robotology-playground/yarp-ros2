@@ -1,26 +1,15 @@
 /*
- * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_RANGEFINDER2D_NWS_ROS2_H
 #define YARP_DEV_RANGEFINDER2D_NWS_ROS2_H
 
-#include <yarp/dev/IWrapper.h>
-#include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/PeriodicThread.h>
 
@@ -49,8 +38,7 @@ public:
 
 class RgbdSensor_nws_ros2 :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IWrapper,
-        public yarp::dev::IMultipleWrapper,
+        public yarp::dev::WrapperSingle,
         public yarp::os::PeriodicThread
 {
 public:
@@ -61,11 +49,7 @@ public:
     RgbdSensor_nws_ros2& operator=(RgbdSensor_nws_ros2&&) noexcept = delete;
     ~RgbdSensor_nws_ros2() override = default;
 
-    // IMultipleWrapper
-    bool        attachAll(const yarp::dev::PolyDriverList &p) override;
-    bool        detachAll() override;
-
-    // IWrapper
+    // WrapperSingle
     bool        attach(yarp::dev::PolyDriver *poly) override;
     bool        detach() override;
 

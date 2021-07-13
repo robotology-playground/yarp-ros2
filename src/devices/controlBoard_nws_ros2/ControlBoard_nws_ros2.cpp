@@ -94,7 +94,7 @@ bool ControlBoard_nws_ros2::open(Searchable& config)
     }
 
     // Check if we need to create subdevice or if they are
-    // passed later on thorugh attachAll()
+    // passed later on thorugh attach()
     if (prop.check("subdevice")) {
         prop.setMonitor(config.getMonitor());
         if (!openAndAttachSubDevice(prop)) {
@@ -126,7 +126,7 @@ bool ControlBoard_nws_ros2::open(Searchable& config)
     m_publisher = Ros2Init::get().node->create_publisher<sensor_msgs::msg::JointState>(topicName, 10);
 
     // In case attach is not deferred and the controlboard already owns a valid device
-    // we can start the thread. Otherwise this will happen when attachAll is called
+    // we can start the thread. Otherwise this will happen when attach is called
     if (subdevice_ready) {
         setPeriod(period);
         if (!start()) {
@@ -279,36 +279,6 @@ bool ControlBoard_nws_ros2::detach()
 
     return true;
 }
-
-bool ControlBoard_nws_ros2::attachAll(const PolyDriverList& p)
-{
-    if (p.size() < 1) {
-        yCError(CONTROLBOARD, "No devices found");
-        return false;
-    }
-
-    if (p.size() > 1) {
-        yCError(CONTROLBOARD, "Cannot attach more than one device");
-        return false;
-    }
-
-    const auto& key = p[0]->key;
-    auto* poly = p[0]->poly;
-
-    if (!poly->isValid())
-    {
-        yCError(CONTROLBOARD, "Device %s is not valid", key.c_str());
-        return false;
-    }
-
-    return attach(poly);
-}
-
-bool ControlBoard_nws_ros2::detachAll()
-{
-    return detach();
-}
-
 
 bool ControlBoard_nws_ros2::updateAxisName()
 {

@@ -9,7 +9,7 @@
 #ifndef YARP_ROS2_LOCALIZATION2D_NWS_ROS2_H
 #define YARP_ROS2_LOCALIZATION2D_NWS_ROS2_H
 
-#include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/ILocalization2D.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/PeriodicThread.h>
@@ -37,7 +37,7 @@ public:
 class Localization2D_nws_ros2 :
         public yarp::dev::DeviceDriver,
         public yarp::os::PeriodicThread,
-        public yarp::dev::IMultipleWrapper
+        public yarp::dev::WrapperSingle
 {
 public:
     Localization2D_nws_ros2();
@@ -46,13 +46,9 @@ public:
     Localization2D_nws_ros2& operator=(const Localization2D_nws_ros2&) = delete;
     Localization2D_nws_ros2& operator=(Localization2D_nws_ros2&&) noexcept = delete;
     ~Localization2D_nws_ros2() override = default;
-
-    //IMultipleWrapper
-    bool attachAll(const yarp::dev::PolyDriverList &p) override;
-    bool detachAll() override;
     
-    void attach(yarp::dev::Nav2D::ILocalization2D *s);
-    void detach();
+    bool attach(yarp::dev::PolyDriver* poly) override;
+    bool detach() override;
     
     // DeviceDriver
     bool open(yarp::os::Searchable& config) override;

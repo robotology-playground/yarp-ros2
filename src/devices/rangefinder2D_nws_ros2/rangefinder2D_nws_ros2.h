@@ -9,7 +9,7 @@
 #ifndef YARP_ROS2_RANGEFINDER2D_NWS_ROS2_H
 #define YARP_ROS2_RANGEFINDER2D_NWS_ROS2_H
 
-#include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/PeriodicThread.h>
@@ -35,7 +35,7 @@ public:
 class Rangefinder2D_nws_ros2 :
         public yarp::dev::DeviceDriver,
         public yarp::os::PeriodicThread,
-        public yarp::dev::IMultipleWrapper
+        public yarp::dev::WrapperSingle
 {
 public:
     Rangefinder2D_nws_ros2();
@@ -45,12 +45,9 @@ public:
     Rangefinder2D_nws_ros2& operator=(Rangefinder2D_nws_ros2&&) noexcept = delete;
     ~Rangefinder2D_nws_ros2() override = default;
 
-    //IMultipleWrapper
-    bool attachAll(const yarp::dev::PolyDriverList &p) override;
-    bool detachAll() override;
-    
-    void attach(yarp::dev::IRangefinder2D *s);
-    void detach();
+    //WrapperSingle
+    bool attach(yarp::dev::PolyDriver* driver) override;
+    bool detach() override;
     
     // DeviceDriver
     bool open(yarp::os::Searchable& config) override;
