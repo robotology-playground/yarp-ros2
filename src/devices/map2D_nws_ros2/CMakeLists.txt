@@ -6,7 +6,9 @@
 
 find_package(nav_msgs REQUIRED)
 find_package(test_msgs REQUIRED)
-find_package(map2d_nws_ros2_msgs REQUIRED)
+if(YARP_ROS2_USE_SYSTEM_map2d_nws_ros2_msgs)
+  find_package(map2d_nws_ros2_msgs REQUIRED)
+endif()
 find_package(visualization_msgs REQUIRED)
 
 yarp_prepare_plugin(map2D_nws_ros2

@@ -29,6 +29,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(YARP_FORCE_DYNAMIC_PLUGINS TRUE CACHE INTERNAL "yarp-ros2 is always built with dynamic plugins")
 set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Build libraries as shared as opposed to static")
 
+option(YARP_ROS2_USE_SYSTEM_map2d_nws_ros2_msgs "If ON, use map2d_nws_ros2_msgs found in the system, otherwise build it with this project." ON)
+
 include(AddInstallRPATHSupport)
 add_install_rpath_support(BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"
                           LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"
@@ -60,9 +62,18 @@ find_package(sensor_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(tf2_msgs REQUIRED)
 find_package(test_msgs REQUIRED)
-find_package(map2d_nws_ros2_msgs REQUIRED)
+
 find_package(visualization_msgs REQUIRED)
 
+if(YARP_ROS2_USE_SYSTEM_map2d_nws_ros2_msgs)
+  find_package(map2d_nws_ros2_msgs REQUIRED)
+else()
+  add_subdirectory(ros2_interfaces_ws/src/map2d_nws_ros2_msgs)
+  # Temporary workaround for https://github.com/ament/ament_cmake/pull/349
+  if(NOT TARGET map2d_nws_ros2_msgs::map2d_nws_ros2_msgs__rosidl_typesupport_cpp)
+    add_library(map2d_nws_ros2_msgs::map2d_nws_ros2_msgs__rosidl_typesupport_cpp ALIAS map2d_nws_ros2_msgs__rosidl_typesupport_cpp)
+  endif()
+endif()
 
 add_subdirectory(src)
 
